@@ -1,7 +1,7 @@
 <?php
 
 /*
-Plugin Name: RDVcalendar
+Plugin Name: almanac
 Plugin URI:http://wordpress.org/plugins/RDVcalendar
 Description: TO DO
 Author: Ivan Naluzhnyi / Mikael PAUL / Theo LEGAGNEUR
