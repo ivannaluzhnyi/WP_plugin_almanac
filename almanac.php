@@ -9,8 +9,13 @@ Version: 0.1.0
 Author URI: http://almanac.com
 */
 
-// TO DO
 
-// require_once plugin_dir_path( __FILE__ ).'includes/';
+require_once( dirname(__FILE__) . '/includes/the-events-calendar.class.php' );
 
+TribeEvents::instance();
 
+// register_activation_hook( __FILE__, 'flush_rewrite_rules' );
+
+if ( is_admin() && ( !defined( 'DOING_AJAX' ) || !DOING_AJAX ) ) {
+	// register_deactivation_hook( __FILE__, array( 'TribeEvents', 'resetActivationMessage' ) );
+}
