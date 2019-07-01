@@ -32,7 +32,7 @@ class almanac_events
 
         // add_filter('views_edit-events', array( &$this, 'remove_post_counts' ));
 
-        // add_action( 'admin_init', array( &$this, 'add_meta_boxes' ) );
+        add_action( 'admin_init', array( &$this, 'add_meta_boxes' ) );
 
         // add_action( 'save_post', array( &$this, 'save_meta_box_data' ), 1, 2 );
 
@@ -182,5 +182,21 @@ class almanac_events
 		default:
 			break;
 		} // end switch
-	}	
+    }	
+    
+
+
+
+    function add_meta_boxes() {
+	
+		add_meta_box( 
+	        'events_details',
+	        'Event details',
+	        array( &$this, 'events_details'),
+	        'events',
+	        'normal',
+	        'core'
+	    );
+	
+	}
 }
