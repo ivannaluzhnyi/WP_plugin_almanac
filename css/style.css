@@ -35,7 +35,7 @@ table.calendar		{
 	border-left: 1px dotted #EEE; 
 	width: 100%;
 }
-tr.calendar-row	{  }
+tr.calendar-row	{}
 td.calendar-day	{ min-height:120px; font-size:11px; position:relative; } 
 * html div.calendar-day { height:80px; }
 td.calendar-day:hover	{ background:#eee; }
