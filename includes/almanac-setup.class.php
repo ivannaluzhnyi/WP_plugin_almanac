@@ -28,9 +28,9 @@ class almanac_events
 
         add_action('manage_events_posts_custom_column', array($this, 'manage_events_columns'), 10, 2);
 
-        // add_filter('pre_get_posts', array( $this, 'show_events_for_current_user_only' ));
+        add_filter('pre_get_posts', array( $this, 'show_events_for_current_user_only' ));
 
-        // add_filter('views_edit-events', array( $this, 'remove_post_counts' ));
+        add_filter('views_edit-events', array( $this, 'remove_post_counts' ));
 
         add_action('init', array($this, 'custom_type_categories'), 0);
 
@@ -166,9 +166,9 @@ class almanac_events
 
         $new_columns['title'] = 'Nom d\'événement ';
 
-        $new_columns['category'] = 'Categorie';
+        $new_columns['categories'] = 'Categories';
 
-        $new_columns['tag'] = 'Tag';
+        $new_columns['tags'] = 'Tags';
 
 
         // var_dump($new_columns);die;
@@ -192,7 +192,10 @@ class almanac_events
                 }
                 echo $events_date . '<br>' . $events_time;
                 break;
-            case 'category':
+            case 'categories':
+                // $categ = get_the_category($id);
+                //  var_dump($categ); die;
+                // echo 'test';
                 break;
             default:
                 break;
@@ -322,4 +325,60 @@ class almanac_events
             }
         }
     }
+
+    function show_events_for_current_user_only($query) {
+	 
+        if($query->is_admin) {
+       
+          if ($query->get('post_type') == 'events'){
+          
+              $current_user = wp_get_current_user();
+              
+              $admin = false;
+              
+              foreach($current_user->roles as $key => $val){
+                  if($val == 'administrator'){
+                      $admin = true;
+                  }
+              }
+              
+              if(!$admin){
+                  
+                  $query->set('meta_key', 'events_user_id');
+                    $query->set('meta_value', $current_user->ID);
+          
+              }
+              
+          }
+          
+        }
+        
+        return $query;
+      
+      }
+      
+      function remove_post_counts($posts_count_disp){
+      
+          $current_user = wp_get_current_user();
+                  
+          $admin = false;
+          
+          foreach($current_user->roles as $key => $val){
+              if($val == 'administrator'){
+                  $admin = true;
+              }
+          }
+          
+          if(!$admin){
+              unset($posts_count_disp['all']);
+                 unset($posts_count_disp['publish']);
+                 unset($posts_count_disp['draft']);
+                 unset($posts_count_disp['trash']);
+                 unset($posts_count_disp['mine']);
+   
+           }
+   
+          return $posts_count_disp;
+      
+      }
 }
