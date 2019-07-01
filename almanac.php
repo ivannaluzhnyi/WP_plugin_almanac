@@ -3,14 +3,20 @@
 /*
 Plugin Name: almanac
 Plugin URI:http://wordpress.org/plugins/almanac
-Description: TO DO
+Description: TO DOw
 Author: Ivan Naluzhnyi / Mikael PAUL / Theo LEGAGNEUR
 Version: 0.1.0
 Author URI: http://almanac.com
 */
 
-// TO DO
+if (!defined("WPE_url")) { define("WPE_url", WP_PLUGIN_URL.'/wordpress-events'); } 
 
-// require_once plugin_dir_path( __FILE__ ).'includes/';
+if (!defined("WPE_dir")) { define("WPE_dir", WP_PLUGIN_DIR.'/wordpress-events'); } 
 
+
+
+include_once('includes/almanac-setup.class.php');
+
+// include('includes/almanac-widget.class.php');
+// register_activation_hook( __FILE__, 'flush_rewrite_rules' );
 
