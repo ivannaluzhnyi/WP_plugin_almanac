@@ -28,9 +28,9 @@ class almanac_events
 
         add_action('manage_events_posts_custom_column', array($this, 'manage_events_columns'), 10, 2);
 
-        add_filter('pre_get_posts', array( $this, 'show_events_for_current_user_only' ));
+        add_filter('pre_get_posts', array($this, 'show_events_for_current_user_only'));
 
-        add_filter('views_edit-events', array( $this, 'remove_post_counts' ));
+        add_filter('views_edit-events', array($this, 'remove_post_counts'));
 
         add_action('init', array($this, 'custom_type_categories'), 0);
 
@@ -269,21 +269,6 @@ class almanac_events
 
 
 
-
-    function add_meta_boxes()
-    {
-
-        add_meta_box(
-            'events_details',
-            'Event details',
-            array($this, 'events_details'),
-            'events',
-            'normal',
-            'core'
-        );
-    }
-
-
     function save_meta_box_data($post_id)
     {
 
@@ -326,59 +311,208 @@ class almanac_events
         }
     }
 
-    function show_events_for_current_user_only($query) {
-	 
-        if($query->is_admin) {
-       
-          if ($query->get('post_type') == 'events'){
-          
-              $current_user = wp_get_current_user();
-              
-              $admin = false;
-              
-              foreach($current_user->roles as $key => $val){
-                  if($val == 'administrator'){
-                      $admin = true;
-                  }
-              }
-              
-              if(!$admin){
-                  
-                  $query->set('meta_key', 'events_user_id');
+    function show_events_for_current_user_only($query)
+    {
+
+        if ($query->is_admin) {
+
+            if ($query->get('post_type') == 'events') {
+
+                $current_user = wp_get_current_user();
+
+                $admin = false;
+
+                foreach ($current_user->roles as $key => $val) {
+                    if ($val == 'administrator') {
+                        $admin = true;
+                    }
+                }
+
+                if (!$admin) {
+
+                    $query->set('meta_key', 'events_user_id');
                     $query->set('meta_value', $current_user->ID);
-          
-              }
-              
-          }
-          
+                }
+            }
         }
-        
+
         return $query;
-      
-      }
-      
-      function remove_post_counts($posts_count_disp){
-      
-          $current_user = wp_get_current_user();
-                  
-          $admin = false;
-          
-          foreach($current_user->roles as $key => $val){
-              if($val == 'administrator'){
-                  $admin = true;
-              }
-          }
-          
-          if(!$admin){
-              unset($posts_count_disp['all']);
-                 unset($posts_count_disp['publish']);
-                 unset($posts_count_disp['draft']);
-                 unset($posts_count_disp['trash']);
-                 unset($posts_count_disp['mine']);
-   
-           }
-   
-          return $posts_count_disp;
-      
-      }
+    }
+
+    function remove_post_counts($posts_count_disp)
+    {
+
+        $current_user = wp_get_current_user();
+
+        $admin = false;
+
+        foreach ($current_user->roles as $key => $val) {
+            if ($val == 'administrator') {
+                $admin = true;
+            }
+        }
+
+        if (!$admin) {
+            unset($posts_count_disp['all']);
+            unset($posts_count_disp['publish']);
+            unset($posts_count_disp['draft']);
+            unset($posts_count_disp['trash']);
+            unset($posts_count_disp['mine']);
+        }
+
+        return $posts_count_disp;
+    }
+
+
+    function add_meta_boxes()
+    {
+
+        add_meta_box(
+            'events_details',
+            'Détails de l\'évènement',
+            array($this, 'events_details'),
+            'events',
+            'normal',
+            'core'
+        );
+    }
+
+
+    function events_details()
+    {
+
+        global $post;
+
+        $current_user = wp_get_current_user();
+
+        if (get_post_meta($post->ID, 'events_user_id', true) == '') {
+            $userID = $current_user->ID;
+        } else {
+            $userID = get_post_meta($post->ID, 'events_user_id', true);
+        }
+
+        ?>
+
+    <input type="hidden" id="events_user_id" name="events_user_id" value="<?= $userID  ?>" />
+
+    <?php
+
+    wp_nonce_field(plugin_basename(__FILE__), 'events_nonce');
+
+    ?>
+
+    <script>
+        jQuery(document).ready(function() {
+            jQuery(".datepicker").datetimepicker({
+                timeFormat: 'h:mm',
+                separator: ' @ ',
+                dateFormat: 'dd-mm-yy'
+            });
+            <?php if (get_post_meta($post->ID, 'events_date', true) == '') { ?>
+                jQuery(".datepicker").datetimepicker('setDate', (new Date()));
+                jQuery('#ui-datepicker-div').hide();
+            <?php } ?>
+        });
+    </script>
+
+    <table class="form-table">
+        <tbody>
+
+            <tr valign="top">
+                <th scope="row">
+                    <label for="venue_name">Nom de la place</label>
+                </th>
+                <td>
+                    <input type="text" id="events_venu_name" name="events_venue_name" value="<?php echo get_post_meta($post->ID, 'events_venue_name', true); ?>" size="25" />
+                </td>
+            </tr>
+
+            <tr valign="top">
+
+                <th scope="row">
+                    <label for="venue_name"> Adresse</label>
+                </th>
+
+                <td>
+
+                    <textarea name="venue_location_address" id="member_info_address" cols="50" rows="9" class="input"><?php echo get_post_meta($post->ID, 'venue_location_address', true); ?></textarea>
+
+                    <br>
+
+                    <a class="showhide" style="cursor:pointer;">Afficher / masquer l'entrée de carte</a>
+
+                    <div id="showhide">
+
+                        <input type="text" class="input" name="mi_location" id="member_info_location" value="<?php echo get_post_meta($post->ID, 'mi_location', true); ?>" />
+                        <input type="button" class="button-primary button" value="Lookup" onClick="codeAddress('YES')" />
+                        <br>
+                        <span class="description" style="float: left;">
+                            Entrez un emplacement dans n’importe quel format et cliquez sur le bouton "Rechercher".
+                        </span>
+                        <br>
+                        <br>
+                        <div id="map_canvas" style="float:left; width:500px; height:400px; margin-right: 10px;">
+                        </div>
+                        <div style="width: 35%;float:left;clear:left;" id="didyoumean">
+                        </div>
+                        <br style="clear:both;">
+                        <br>
+                        <br>
+
+                        <input type="hidden" name="lng" id="lng" value="<?php echo get_post_meta($post->ID, 'lng', true); ?>" />
+                        <input type="hidden" name="lat" id="lat" value="<?php echo get_post_meta($post->ID, 'lat', true); ?>" />
+                        <span class="member_info_label">Afficher la carte?</span>
+                        <select name="show_map" id="mi_show_map">
+                            <option value="">Veuillez choisir</option>
+                            <option value="true" <?php if (get_post_meta($post->ID, 'show_map', true) == 'true') {
+                                                        echo 'selected';
+                                                    } ?>>True</option>
+                            <option value="false" <?php if (get_post_meta($post->ID, 'show_map', true) == 'false') {
+                                                        echo 'selected';
+                                                    } ?>>False</option>
+                        </select>
+                        <span class="description">
+                            Afficher une carte du lieu de l'événement?
+                        </span>
+
+                    </div>
+
+                    <br style="clear:both;">
+
+                </td>
+
+            </tr>
+
+            <tr valign="top">
+                <th scope="row">
+                    <label for="date">Date et l'heure</label>
+                </th>
+                <td>
+                    <?php if (get_post_meta($post->ID, 'events_date', true) != '') {
+
+                        $date = date('d-m-Y @ H:i', get_post_meta($post->ID, 'events_date', true));
+                    } else {
+
+                        $date = '';
+                    } ?>
+
+                    <input class="datepicker" type="text" id="events_date" name="events_date" value="<?php echo $date; ?>" size="25" />
+                </td>
+            </tr>
+
+            <tr valign="top">
+                <th scope="row">
+                    <label for="tickets">Tickets URL</label>
+                </th>
+                <td>
+                    <input type="text" id="events_tickets" name="events_tickets" value="<?php echo get_post_meta($post->ID, 'events_tickets', true); ?>" size="50" />
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+
+<?php
+
+}
 }
