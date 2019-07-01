@@ -1,1 +1,1 @@
-# WP_plugin_RDVcalendar
+# WP_plugin_almanac
