@@ -17,6 +17,6 @@ if (!defined("WPE_dir")) { define("WPE_dir", WP_PLUGIN_DIR.'/wordpress-events');
 
 include_once('includes/almanac-setup.class.php');
 
-// include('includes/class-wordpress-events-widget.php');
+// include('includes/almanac-widget.class.php');
 // register_activation_hook( __FILE__, 'flush_rewrite_rules' );
 
