@@ -7,7 +7,7 @@ Description: TO DOw
 Author: Ivan Naluzhnyi / Mikael PAUL / Theo LEGAGNEUR
 Version: 0.1.0
 Author URI: http://almanac.com
-
+*/
 
 if (!defined("WPE_url")) { define("WPE_url", WP_PLUGIN_URL.'/wordpress-events'); } 
 
