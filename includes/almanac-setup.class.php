@@ -1,8 +1,11 @@
 <?php
 
-$almanac_events = new almanac_events;
+include './taxonomy.class.php';
 
-class almanac_events
+$almanac_events = new Almanac_events;
+
+
+class Almanac_events
 {
 
     function almanac_events()
@@ -44,14 +47,15 @@ class almanac_events
 
         add_action('admin_menu', array($this, 'add_pages'));
 
-        add_action('wp_head', array( $this, 'my_action_javascript') );
+        add_action('wp_head', array($this, 'my_action_javascript'));
 
-        // add_action('wp_ajax_nopriv_my_special_action', array( $this, 'my_action_callback') ); 
+        add_action('wp_ajax_nopriv_my_special_action', array($this, 'my_action_callback'));
 
-        // add_action('wp_ajax_my_special_action', array( $this, 'my_action_callback') ); 
-
+        add_action('wp_ajax_my_special_action', array($this, 'my_action_callback'));
 
     }
+
+
 
 
     function admin_js_libs()
@@ -154,6 +158,71 @@ class almanac_events
         register_post_type('events', $args);
     }
 
+    function custom_type_categories()
+    {
+        $props = array(
+            'name' => _x('Événements Categories', 'mythemlg'),
+            'singular_name' => _x('Événements Categorie', 'mythemlg'),
+            'search_items' =>  __('Chercher Événements Categories'),
+            'all_items' => __('Tots les categories'),
+            'parent_item' => __('Parent Événements categorie'),
+            'parent_item_colon' => __('Parent Événements categorie:'),
+            'edit_item' => __('Modifié  categorie'),
+            'update_item' => __('Modifié categorie'),
+            'add_new_item' => __('Ajouter nouvelle categorie'),
+            'new_item_name' => __('Ajouter nouvelle categorie'),
+            'menu_name' => __(' Categories'),
+        );
+
+        // Now register the taxonomy
+        register_taxonomy('events_categories', array('events'), array(
+            'hierarchical' => true,
+            'labels' => $props,
+            'show_ui' => true,
+            'show_in_rest' => true,
+            'show_admin_column' => true,
+            'query_var' => true,
+            'rewrite' => array('slug' => 'events_categories'),
+        ));
+    }
+
+    // render tags 
+    function events_tags_taxonomy()
+    {
+        // Labels part for the GUI
+
+        $props = array(
+            'name' => _x('Événements Tags', 'taxonomy general name'),
+            'singular_name' => _x('Événements Tag', 'taxonomy singular name'),
+            'search_items' =>  __('Chercher Événements Tags'),
+            'popular_items' => __('Popular Événements Tags'),
+            'all_items' => __('Tout les Tags'),
+            'parent_item' => null,
+            'parent_item_colon' => null,
+            'edit_item' => __('Modifié Tag'),
+            'update_item' => __('Modifié Tag'),
+            'add_new_item' => __('Ajouter Tag'),
+            'new_item_name' => __('Ajouter Tag'),
+            'separate_items_with_commas' => __('Separate Événements tags with commas'),
+            'add_or_remove_items' => __('Add or remove Événements tags'),
+            'choose_from_most_used' => __('Choose from the most used Événements tags'),
+            'menu_name' => __(' Tags'),
+        );
+
+        // Now register the non-hierarchical taxonomy like tag
+
+        register_taxonomy('events_tags', array('events'), array(
+            'hierarchical' => false,
+            'labels' => $props,
+            'show_ui' => true,
+            'show_in_rest' => true,
+            'show_admin_column' => true,
+            'update_count_callback' => '_update_post_term_count',
+            'query_var' => true,
+            'rewrite' => array('slug' => 'events_tags'),
+        ));
+    }
+
 
 
     function add_new_events_columns($events_columns)
@@ -201,114 +270,7 @@ class almanac_events
         } // end switch
     }
 
-    function custom_type_categories()
-    {
-        $props = array(
-            'name' => _x('Événements Categories', 'mythemlg'),
-            'singular_name' => _x('Événements Categorie', 'mythemlg'),
-            'search_items' =>  __('Chercher Événements Categories'),
-            'all_items' => __('Tots les categories'),
-            'parent_item' => __('Parent Événements categorie'),
-            'parent_item_colon' => __('Parent Événements categorie:'),
-            'edit_item' => __('Modifié  categorie'),
-            'update_item' => __('Modifié categorie'),
-            'add_new_item' => __('Ajouter nouvelle categorie'),
-            'new_item_name' => __('Ajouter nouvelle categorie'),
-            'menu_name' => __(' Categories'),
-        );
 
-        // Now register the taxonomy
-        register_taxonomy('events_categories', array('events'), array(
-            'hierarchical' => true,
-            'labels' => $props,
-            'show_ui' => true,
-            'show_in_rest' => true,
-            'show_admin_column' => true,
-            'query_var' => true,
-            'rewrite' => array('slug' => 'events_categories'),
-        ));
-    }
-
-    // TAGS
-    function events_tags_taxonomy()
-    {
-        // Labels part for the GUI
-
-        $props = array(
-            'name' => _x('Événements Tags', 'taxonomy general name'),
-            'singular_name' => _x('Événements Tag', 'taxonomy singular name'),
-            'search_items' =>  __('Chercher Événements Tags'),
-            'popular_items' => __('Popular Événements Tags'),
-            'all_items' => __('Tout les Tags'),
-            'parent_item' => null,
-            'parent_item_colon' => null,
-            'edit_item' => __('Modifié Tag'),
-            'update_item' => __('Modifié Tag'),
-            'add_new_item' => __('Ajouter Tag'),
-            'new_item_name' => __('Ajouter Tag'),
-            'separate_items_with_commas' => __('Separate Événements tags with commas'),
-            'add_or_remove_items' => __('Add or remove Événements tags'),
-            'choose_from_most_used' => __('Choose from the most used Événements tags'),
-            'menu_name' => __(' Tags'),
-        );
-
-        // Now register the non-hierarchical taxonomy like tag
-
-        register_taxonomy('events_tags', array('events'), array(
-            'hierarchical' => false,
-            'labels' => $props,
-            'show_ui' => true,
-            'show_in_rest' => true,
-            'show_admin_column' => true,
-            'update_count_callback' => '_update_post_term_count',
-            'query_var' => true,
-            'rewrite' => array('slug' => 'events_tags'),
-        ));
-    }
-
-
-
-    function save_meta_box_data($post_id)
-    {
-
-        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
-            return;
-
-        if (isset($_POST['events_venue_name'])) {
-
-            if (!wp_verify_nonce($_POST['events_nonce'], plugin_basename(__FILE__)))
-                return;
-
-            update_post_meta($post_id, 'venue_location_address', $_POST['venue_location_address']);
-
-            list($day, $month, $year, $hours, $minutes) = sscanf($_POST['events_date'], '%02d-%02d-%04d @ %02d:%02d');
-
-            $date = new DateTime("$year-$month-$day $hours:$minutes");
-
-            update_post_meta($post_id, 'events_date', strtotime($date->format('r')));
-
-            update_post_meta($post_id, 'events_tickets', $_POST['events_tickets']);
-
-            update_post_meta($post_id, 'events_venue_name', $_POST['events_venue_name']);
-
-            update_post_meta($post_id, 'lat', $_POST['lat']);
-
-            update_post_meta($post_id, 'lng', $_POST['lng']);
-
-            update_post_meta($post_id, 'show_map', $_POST['show_map']);
-
-            update_post_meta($post_id, 'events_user_id', $_POST['events_user_id']);
-
-            $postarr = get_post($post_id, 'ARRAY_A');
-
-            if ($postarr['post_date'] != $date->format('Y-m-d H:i:s')) {
-
-                $postarr['post_date'] = $date->format(DATE_RFC3339);
-
-                $post_id = wp_update_post($postarr);
-            }
-        }
-    }
 
     function show_events_for_current_user_only($query)
     {
@@ -362,20 +324,18 @@ class almanac_events
         return $posts_count_disp;
     }
 
-
     function add_meta_boxes()
     {
 
         add_meta_box(
             'events_details',
-            'Détails de l\'évènement',
-            array($this, 'events_details'),
+            'Event details',
+            array(&$this, 'events_details'),
             'events',
             'normal',
             'core'
         );
     }
-
 
     function events_details()
     {
@@ -392,7 +352,7 @@ class almanac_events
 
         ?>
 
-    <input type="hidden" id="events_user_id" name="events_user_id" value="<?= $userID  ?>" />
+    <input type="hidden" id="events_user_id" name="events_user_id" value="<?php echo $userID  ?>" />
 
     <?php
 
@@ -400,23 +360,22 @@ class almanac_events
 
     ?>
 
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+        integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+        crossorigin=""></script>
+
     <script>
         jQuery(document).ready(function() {
             jQuery(".datepicker").datetimepicker({
                 timeFormat: 'h:mm',
                 separator: ' @ ',
                 dateFormat: 'dd-mm-yy'
-            }); <
-            ?
-            php
-            if (get_post_meta($post - > ID, 'events_date', true) == '') {
-                ?
-                >
-                jQuery(".datepicker").datetimepicker('setDate', (new Date()));
-                jQuery('#ui-datepicker-div').hide(); <
-                ?
-                php
-            } ? >
+            }); 
+            <?php if (get_post_meta($post->ID, 'events_date', true) == '') : ?>
+                    jQuery(".datepicker").datetimepicker('setDate', (new Date()));
+                    jQuery('#ui-datepicker-div').hide(); 
+                    <?php
+            endif; ?>
         });
     </script>
 
@@ -435,7 +394,7 @@ class almanac_events
             <tr valign="top">
 
                 <th scope="row">
-                    <label for="venue_name"> Adresse</label>
+                    <label for="venue_name">Adresse du lieu</label>
                 </th>
 
                 <td>
@@ -452,11 +411,13 @@ class almanac_events
                         <input type="button" class="button-primary button" value="Rechercher" onClick="codeAddress('YES')" />
                         <br>
                         <span class="description" style="float: left;">
-                            Entrez un emplacement dans n’importe quel format et cliquez sur le bouton "Rechercher".
+                            Entrez un emplacement dans n'importe quel format et cliquez sur le bouton "Rechercher".
                         </span>
                         <br>
                         <br>
-                        <div id="map_canvas" style="float:left; width:500px; height:400px; margin-right: 10px;">
+
+                        <div id="mapid" style="float:left; width:500px; height:400px; margin-right: 10px;">
+
                         </div>
                         <div style="width: 35%;float:left;clear:left;" id="didyoumean">
                         </div>
@@ -507,7 +468,7 @@ class almanac_events
 
             <tr valign="top">
                 <th scope="row">
-                    <label for="tickets">Tickets URL</label>
+                    <label for="tickets">Ticket/s URL</label>
                 </th>
                 <td>
                     <input type="text" id="events_tickets" name="events_tickets" value="<?php echo get_post_meta($post->ID, 'events_tickets', true); ?>" size="50" />
@@ -518,6 +479,49 @@ class almanac_events
     </table>
 
 <?php
+
+}
+
+function save_meta_box_data($post_id)
+{
+
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
+        return;
+
+    if (isset($_POST['events_venue_name'])) {
+
+        if (!wp_verify_nonce($_POST['events_nonce'], plugin_basename(__FILE__)))
+            return;
+
+        update_post_meta($post_id, 'venue_location_address', $_POST['venue_location_address']);
+
+        list($day, $month, $year, $hours, $minutes) = sscanf($_POST['events_date'], '%02d-%02d-%04d @ %02d:%02d');
+
+        $date = new DateTime("$year-$month-$day $hours:$minutes");
+
+        update_post_meta($post_id, 'events_date', strtotime($date->format('r')));
+
+        update_post_meta($post_id, 'events_tickets', $_POST['events_tickets']);
+
+        update_post_meta($post_id, 'events_venue_name', $_POST['events_venue_name']);
+
+        update_post_meta($post_id, 'lat', $_POST['lat']);
+
+        update_post_meta($post_id, 'lng', $_POST['lng']);
+
+        update_post_meta($post_id, 'show_map', $_POST['show_map']);
+
+        update_post_meta($post_id, 'events_user_id', $_POST['events_user_id']);
+
+        $postarr = get_post($post_id, 'ARRAY_A');
+
+        if ($postarr['post_date'] != $date->format('Y-m-d H:i:s')) {
+
+            $postarr['post_date'] = $date->format(DATE_RFC3339);
+
+            $post_id = wp_update_post($postarr);
+        }
+    }
 }
 
 function display_calendar($atts)
@@ -548,12 +552,12 @@ function display_calendar($atts)
     }
 
     $calendar = '<span class="events_date_now">' . date("F Y", strtotime($year . "-" . $month . "-01")) . '</span>
-
-        <span class="float-left calendar_nav"><a href="' . add_query_arg(array('mm' => date('m', strtotime($year . "-" . $month . "-01 -1 months")), 'yy' => date('Y', strtotime($year . "-" . $month . "-01 -1 months"))), get_permalink()) . '"><< ' . date("F Y", strtotime($year . "-" . $month . "-01 -1 months")) . '</a></span>
-        
-        <span class="float-right calendar_nav"><a href="' . add_query_arg(array('mm' => date('m', strtotime($year . "-" . $month . "-01 +1 months")), 'yy' => date('Y', strtotime($year . "-" . $month . "-01 +1 months"))), get_permalink()) . '">' . date("F Y", strtotime($year . "-" . $month . "-01 +1 months")) . ' >></a></span>
-        
-        <br style="clear:both;">';
+	
+		<span class="float-left calendar_nav"><a href="' . add_query_arg(array('mm' => date('m', strtotime($year . "-" . $month . "-01 -1 months")), 'yy' => date('Y', strtotime($year . "-" . $month . "-01 -1 months"))), get_permalink()) . '"><< ' . date("F Y", strtotime($year . "-" . $month . "-01 -1 months")) . '</a></span>
+		
+		<span class="float-right calendar_nav"><a href="' . add_query_arg(array('mm' => date('m', strtotime($year . "-" . $month . "-01 +1 months")), 'yy' => date('Y', strtotime($year . "-" . $month . "-01 +1 months"))), get_permalink()) . '">' . date("F Y", strtotime($year . "-" . $month . "-01 +1 months")) . ' >></a></span>
+		
+		<br style="clear:both;">';
 
     /* draw table */
     $calendar .= '<table cellpadding="0" cellspacing="0" class="calendar">';
@@ -590,15 +594,15 @@ function display_calendar($atts)
         $end = strtotime($year . "-" . $month . "-" . $list_day . "-23-59");
 
         $querystr = "
-        SELECT $wpdb->posts.* , $wpdb->postmeta.* 
-        FROM $wpdb->posts, $wpdb->postmeta
-        WHERE $wpdb->posts.ID = $wpdb->postmeta.post_id 
-        AND $wpdb->postmeta.meta_key = 'events_date' 
-        AND $wpdb->posts.post_status = 'publish' 
-        AND $wpdb->posts.post_type = 'events' 
-        AND $wpdb->postmeta.meta_value >= " . $start . "
-        AND $wpdb->postmeta.meta_value <= " . $end . "
-        ";
+		SELECT $wpdb->posts.* , $wpdb->postmeta.* 
+		FROM $wpdb->posts, $wpdb->postmeta
+		WHERE $wpdb->posts.ID = $wpdb->postmeta.post_id 
+		AND $wpdb->postmeta.meta_key = 'events_date' 
+		AND $wpdb->posts.post_status = 'publish' 
+		AND $wpdb->posts.post_type = 'events' 
+		AND $wpdb->postmeta.meta_value >= " . $start . "
+		AND $wpdb->postmeta.meta_value <= " . $end . "
+		";
 
         //echo $querystr.'<br><br>';
 
@@ -621,17 +625,17 @@ function display_calendar($atts)
                     $user_data = get_userdata(get_post_meta(get_the_ID(), 'events_user_id', true));
 
                     $calendar .= '<span class="float-left">
-                        
-                        <a id="' . get_the_ID() . '" onclick="resize(\'' . get_post_meta($post->ID, 'lat', true) . '\', \'' . get_post_meta($post->ID, 'lng', true) . '\', \'' . get_the_ID() . '\', \'' . get_the_title() . '\', \'' . $calendar_url . '\')" title="' . get_the_title() . '" class="light-blue pointer" >'
+						
+						<a id="' . get_the_ID() . '" onclick="resize(\'' . get_post_meta($post->ID, 'lat', true) . '\', \'' . get_post_meta($post->ID, 'lng', true) . '\', \'' . get_the_ID() . '\', \'' . get_the_title() . '\', \'' . $calendar_url . '\')" title="' . get_the_title() . '" class="light-blue pointer" >'
 
                         . get_the_title() .
 
                         '<br>
-                            <span class="grey_666 small">
-                            
-                                ' . get_post_meta(get_the_ID(), 'events_venue_name', true) . '
-                                                    
-                            </span>';
+							<span class="grey_666 small">
+							
+								' . get_post_meta(get_the_ID(), 'events_venue_name', true) . '
+													
+							</span>';
 
                     if (($display_author == 'all') || ($display_author == 'parent' && $user == 'all')) {
 
@@ -672,12 +676,12 @@ function display_calendar($atts)
                     }
 
                     $calendar .= '</span></a><img class="loading loading_' . get_the_ID() . '" src="' . WPE_url . '/img/loading.gif" alt="Loading…" style="display:none;" />
-                    
-                    </span>
-                    
-                    <br style="clear:both" />
-                    
-                    <br>';
+					
+					</span>
+					
+					<br style="clear:both" />
+					
+					<br>';
                 }
 
                 $i++;
@@ -716,37 +720,44 @@ function display_calendar($atts)
     $calendar .= '<div id="wordpress_events_ajax_div" style="display:none;"></div>';
 
     $calendar .= '
-        
-            <script type="text/javascript">
-            
-                function resize(lat, lng, id, title, url){
-                                    
-                    //jQuery(\'#\' + id).dialog({modal: true, minWidth: 700, minHeight: 500, title: title });
-                    
-                    ajax_calendar(id, title, url, lat, lng);
-                
-                    return false;
-                
-                }
-                
-            </script>';
+		
+			<script type="text/javascript">
+			
+				function resize(lat, lng, id, title, url){
+									
+					//jQuery(\'#\' + id).dialog({modal: true, minWidth: 700, minHeight: 500, title: title });
+					
+					ajax_calendar(id, title, url, lat, lng);
+				
+					return false;
+				
+				}
+				
+			</script>';
 
     if (isset($_GET['id'])) {
 
         $calendar .= '<script type="text/javascript">
-                        
-                jQuery(document).ready(function() {
-                    
-                    //jQuery(\'#' . $_GET['id'] . '\').dialog({modal: true, minWidth: 700, minHeight: 500, title: \'' . urldecode($_GET['t']) . ', zIndex: 5000\' });
-                    
-                    ajax_calendar(\'' . $_GET['id'] . '\', \'' . urldecode($_GET['t']) . '\', \'' . get_permalink() . '\');
-                    
-                })
-            
-            </script>';
+						
+				jQuery(document).ready(function() {
+					
+					//jQuery(\'#' . $_GET['id'] . '\').dialog({modal: true, minWidth: 700, minHeight: 500, title: \'' . urldecode($_GET['t']) . ', zIndex: 5000\' });
+					
+					ajax_calendar(\'' . $_GET['id'] . '\', \'' . urldecode($_GET['t']) . '\', \'' . get_permalink() . '\');
+					
+				})
+			
+			</script>';
     }
 
     return $calendar;
+}
+
+function getTinyUrl($url)
+{
+
+    $tinyurl = file_get_contents("http://tinyurl.com/api-create.php?url=" . $url);
+    return $tinyurl;
 }
 
 function add_pages()
@@ -754,7 +765,6 @@ function add_pages()
 
     add_options_page('WordPress Events Settings', 'WordPress Events', 'manage_options', 'wordpress-events', array(&$this, 'settings_page'));
 }
-
 
 function settings_page()
 {
@@ -895,7 +905,6 @@ function settings_page()
 
 <?php }
 
-
 function my_action_javascript()
 {
     ?>
@@ -932,4 +941,197 @@ function my_action_javascript()
     </script>
 <?php
 }
+
+function my_action_callback()
+{
+    global $post;
+    $id = $_POST['id'];
+    $url = $_POST['url'];
+    $lat = $_POST['lat'];
+    $lng = $_POST['lng'];
+    $post = get_post($id);
+    setup_postdata(get_post($post));
+
+    $display_author = get_option('display_author');
+
+    $author_meta = get_option('author_meta');
+
+    $prepend_author = get_option('prepend_author');
+
+    if (!isset($atts['user'])) {
+        $user = 'all';
+    } else {
+        $user = $atts['user'];
+    }
+
+    if (isset($_GET['mm'])) {
+        $month = intval($_GET['mm']);
+    } else {
+        $month = date("m");
+    }
+
+    if (isset($_GET['yy'])) {
+        $year = intval($_GET['yy']);
+    } else {
+        $year = date("Y");
+    }
+
+    $calendar = '<div id="' . str_replace(' ', '_', preg_replace("/[^a-zA-Z0-9\s]/", "", get_the_title())) . '"">
+													
+			<span class="float-left event_single_left">
+																							
+			<h3>' . date('jS \o\f F Y. g.ia', get_post_meta(get_the_ID(), 'events_date', true)) . '</h3>';
+
+    $calendar .= '<br>
+			
+			<p>' . nl2br(get_the_content()) . '</p>
+			
+			</span>
+			
+			<span class="float-right event_single_right">
+			
+			<div>
+		
+				<!-- AddThis Button BEGIN -->
+				<div class="addthis_toolbox addthis_default_style ">
+					<a class="addthis_button_preferred_1"></a>
+					<a class="addthis_button_preferred_2"></a>
+					<a class="addthis_button_preferred_3"></a>
+					<a class="addthis_button_preferred_4"></a>
+					<a class="addthis_button_compact"></a>
+					<a class="addthis_counter addthis_bubble_style"></a>
+				</div>
+				<script type="text/javascript">
+					var addthis_config = {"data_track_addressbar":false};
+					var addthis_share = {"url":"' . $turl = $this->getTinyUrl(add_query_arg(array('mm' => $month, 'yy' => $year, 'id' => $id, 't' => urlencode(get_the_title())), $url)) . '"};
+				</script>
+				<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js?domready=1#pubid=ra-4f0f005c74986ffa"></script>
+				 <!-- AddThis Button END -->
+	
+			</div>';
+
+    if (function_exists("has_post_thumbnail") && has_post_thumbnail()) {
+
+        $image_id = get_post_thumbnail_id();
+        $image_url = wp_get_attachment_image_src($image_id, 'full');
+        $image_url = $image_url[0];
+
+        $calendar .= '<br><img class="single_image" src="' . WPE_url . '/timthumb/timthumb.php?src=' . $image_url . '&w=280" /><br>';
+    }
+
+    $calendar .= '<h2>' . get_post_meta(get_the_ID(), 'events_venue_name', true) . '</h2>
+			
+				<p>' . nl2br(get_post_meta(get_the_ID(), 'venue_location_address', true)) . '</p>';
+
+    $calendar .= '<div id="map_canvas' . $id . '" style="float:left; width:274px; height:247px; margin-right: 10px;"></div>';
+
+    if (get_post_meta(get_the_ID(), 'events_tickets', true) != '') {
+
+        $calendar .= '<p><span class="ticket"><a href="' . get_post_meta(get_the_ID(), 'events_tickets', true) . '">Tickets for ' . get_the_title() . '</a></span></p>';
+    }
+
+    $calendar .= '</span>
+			
+			<br style="clear:both; width:100%;" />
+		
+		</div>';
+
+    if (get_post_meta($post->ID, 'show_map', true) == 'true') {
+
+        $calendar .= '
+		
+			<input type="hidden" name="lng" id="lng' . $id . '" value="' . get_post_meta($post->ID, 'lng', true) . '" />
+			<input type="hidden" name="lat" id="lat' . $id . '" value="' . get_post_meta($post->ID, 'lat', true) . '" />
+		
+            <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+            integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+            crossorigin=""></script>
+
+			<script type="text/javascript">
+			
+				var geocoder;
+				var map;
+				var marker;
+				var markersArray = [];
+			
+				geocoder = new google.maps.Geocoder();
+				
+					var latlng = new google.maps.LatLng(jQuery(\'#lat' . $id . '\').val(),jQuery(\'#lng' . $id . '\').val());
+				
+					var myOptions = {
+			  			zoom: 15,
+			  			center: latlng,
+			  			mapTypeControl: false,
+			  			mapTypeId: google.maps.MapTypeId.ROADMAP
+					}
+					map = new google.maps.Map(document.getElementById("map_canvas' . $id . '"), myOptions);
+				    
+				    geocoder.geocode({\'latLng\': latlng}, function(results, status) {
+				      if (status == google.maps.GeocoderStatus.OK) {
+				  		//console.log(results);
+				  			
+						if (markersArray){
+					        for (i in markersArray){
+					            markersArray[i].setMap(null);
+					        }
+					    }
+
+				    	var marker = new google.maps.Marker({
+				        	map: map, 
+				        	position: results[0].geometry.location   
+				    	});
+				    	markersArray.push(marker);     	
+                        
+				      } else {
+				        alert("Geocoder failed due to: " + status);
+				      }
+					});
+					
+					google.maps.event.trigger(map, \'resize\'); 
+					
+					var darwin = new google.maps.LatLng(' . $lat . ',' . $lng . ');
+					
+					map.setCenter(darwin);
+										
+			</script>';
+    }
+
+    echo $calendar;
+
+    die();
 }
+}
+
+remove_role('personal_calendar');
+
+add_role('personal_calendar', 'Calendar User', array(
+    'read' => true,
+    'edit_posts' => false,
+    'delete_posts' => false,
+    'edit_calendar' => true,
+    'edit_calendars' => true,
+    'edit_others_posts' => false,
+    'edit_others_calendars' => false,
+    'publish_calendars' => true,
+    'delete_calendar' => true
+));
+
+//grab the admin role
+$adapt_admin = get_role('administrator');
+
+//and give them permissions for our plugin too
+$adapt_admin->add_cap('delete_calendar');
+$adapt_admin->add_cap('delete_calendars');
+$adapt_admin->add_cap('delete_private_calendars');
+$adapt_admin->add_cap('delete_published_calendars');
+$adapt_admin->add_cap('edit_calendar');
+$adapt_admin->add_cap('edit_calendars');
+$adapt_admin->add_cap('edit_private_calendars');
+$adapt_admin->add_cap('edit_published_calendars');
+$adapt_admin->add_cap('publish_calendars');
+$adapt_admin->add_cap('read_calendar');
+$adapt_admin->add_cap('read_private_calendars');
+$adapt_admin->add_cap('edit_others_calendars');
+$adapt_admin->add_cap('delete_others_calendars');
+
+?>
