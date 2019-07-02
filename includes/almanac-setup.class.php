@@ -42,9 +42,9 @@ class almanac_events
 
         add_shortcode('calendar', array($this, 'display_calendar'));
 
-        add_action('admin_menu', array( $this, 'add_pages'));
+        add_action('admin_menu', array($this, 'add_pages'));
 
-        // add_action('wp_head', array( $this, 'my_action_javascript') );
+        add_action('wp_head', array( $this, 'my_action_javascript') );
 
         // add_action('wp_ajax_nopriv_my_special_action', array( $this, 'my_action_callback') ); 
 
@@ -894,4 +894,42 @@ function settings_page()
     </div>
 
 <?php }
+
+
+function my_action_javascript()
+{
+    ?>
+    <script type="text/javascript">
+        function ajax_calendar(id, title, url, lat, lng) {
+
+            jQuery('img.loading_' + id).show();
+
+            var data = {
+                action: 'my_special_action',
+                id: id,
+                title: title,
+                url: url,
+                lat: lat,
+                lng: lng
+            };
+
+            // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
+            jQuery.post("<?php bloginfo('wpurl'); ?>/wp-admin/admin-ajax.php", data, function(response) {
+                jQuery('#wordpress_events_ajax_div').html(response);
+                jQuery('#wordpress_events_ajax_div').dialog({
+                    modal: true,
+                    minWidth: 700,
+                    minHeight: 500,
+                    title: title,
+                    zIndex: 5000
+                });
+                jQuery('img.loading_' + id).hide();
+
+                //alert('Got this from the server: ' + response);
+            });
+
+        };
+    </script>
+<?php
+}
 }
