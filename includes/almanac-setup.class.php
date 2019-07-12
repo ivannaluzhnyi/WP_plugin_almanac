@@ -20,7 +20,7 @@ class almanac_events {
 		
 		add_action("wp_enqueue_scripts", array( $this, 'front_js_libs' ));
 					
-		add_action( 'init', array( $this, 'add_custom_post_type' ) );
+		add_action('init', array( $this, 'add_custom_post_type' ) );
 
 		add_action('init', array( $this, 'custom_type_categories' ) );
 
@@ -878,13 +878,11 @@ class almanac_events {
 			lng: lng
 		};
 	
-		// since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
 		jQuery.post("<?php bloginfo( 'wpurl' ); ?>/wp-admin/admin-ajax.php", data, function(response) {
 			jQuery('#wordpress_events_ajax_div').html(response);
 			jQuery('#wordpress_events_ajax_div').dialog({modal: true, minWidth: 700, minHeight: 500, title: title, zIndex: 5000 });
 			jQuery('img.loading_'+id).hide();
 
-			//alert('Got this from the server: ' + response);
 		});
 		  
 		};
