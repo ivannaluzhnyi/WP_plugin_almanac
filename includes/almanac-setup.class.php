@@ -20,7 +20,11 @@ class almanac_events {
 		
 		add_action("wp_enqueue_scripts", array( $this, 'front_js_libs' ));
 					
-		add_action( 'init', array( $this, 'add_custom_post_type' ) );
+		add_action('init', array( $this, 'add_custom_post_type' ) );
+
+		add_action('init', array( $this, 'custom_type_categories' ) );
+
+		add_action('init', array( $this, 'events_tags_tags_taxonomy' ) );
 		
 		add_filter('manage_edit-events_columns', array( $this, 'add_new_events_columns' ));
 		
@@ -144,6 +148,71 @@ class almanac_events {
 		
 		register_post_type('events',$args);
 	}
+
+	// CATEGORIES
+	function custom_type_categories()
+	{
+		$props = array(
+			'name' => _x(' Categories', 'mythemlg'),
+			'singular_name' => _x(' Categorie', 'mythemlg'),
+			'search_items' =>  __('Rechercher  Categories'),
+			'all_items' => __('All  Categories'),
+			'parent_item' => __('Parent  Category'),
+			'parent_item_colon' => __('Parent  Category:'),
+			'edit_item' => __('Edit  Category'),
+			'update_item' => __('Update  Category'),
+			'add_new_item' => __('Add New  Category'),
+			'new_item_name' => __('New  Category'),
+			'menu_name' => __(' Categories'),
+		);
+
+		// Now register the taxonomy
+		register_taxonomy('events_categories', array('events'), array(
+			'hierarchical' => true,
+			'labels' => $props,
+			'show_ui' => true,
+			'show_in_rest' => true,
+			'show_admin_column' => true,
+			'query_var' => true,
+			'rewrite' => array('slug' => 'events_categories'),
+		));
+	}
+
+	// TAGS
+	function events_tags_tags_taxonomy()
+	{
+		// Labels part for the GUI
+
+		$props = array(
+			'name' => _x(' Tags', 'taxonomy general name'),
+			'singular_name' => _x(' Tag', 'taxonomy singular name'),
+			'search_items' =>  __('Search  Tags'),
+			'popular_items' => __('Popular  Tags'),
+			'all_items' => __('All  Tags'),
+			'parent_item' => null,
+			'parent_item_colon' => null,
+			'edit_item' => __('Edit  Tag'),
+			'update_item' => __('Update  Tag'),
+			'add_new_item' => __('Add New  Tag'),
+			'new_item_name' => __('New  Tag Name'),
+			'separate_items_with_commas' => __('Separate  tags with commas'),
+			'add_or_remove_items' => __('Add or remove  tags'),
+			'choose_from_most_used' => __('Choose from the most used  tags'),
+			'menu_name' => __(' Tags'),
+		);
+
+
+		register_taxonomy('events_tags', array('events'), array(
+			'hierarchical' => false,
+			'labels' => $props,
+			'show_ui' => true,
+			'show_in_rest' => true,
+			'show_admin_column' => true,
+			'update_count_callback' => '_update_post_term_count',
+			'query_var' => true,
+			'rewrite' => array('slug' => 'events_tags'),
+		));
+	}
 	
 	function add_new_events_columns($events_columns) {
 	
@@ -152,6 +221,10 @@ class almanac_events {
 		$new_columns['date_time'] = 'Date de l\'événement';
 		
 		$new_columns['title'] = 'Nom de l\'événement';
+
+		$new_columns['categories'] = 'Categories';
+
+		$new_columns['tags'] = 'Tags';
  
 		return $new_columns;
 		
@@ -719,11 +792,11 @@ class almanac_events {
 							
 					    		<select name="display_author">
 					    		
-					    			<option <?php if($display_author == 'none'){ echo 'selected="selected" '; } ?>value="none">None</option>
+					    			<option <?php if($display_author == 'none'){ echo 'selected="selected" '; } ?>value="none">Aucune</option>
 					    			
-					    			<option <?php if($display_author == 'parent'){ echo 'selected="selected" '; } ?>value="parent">A parent calendar that shows events from all users</option>
+					    			<option <?php if($display_author == 'parent'){ echo 'selected="selected" '; } ?>value="parent">Un calendrier parent qui montre les événements de tous les utilisateurs</option>
 					    			
-					    			<option <?php if($display_author == 'all'){ echo 'selected="selected" '; } ?>value="all">All</option>
+					    			<option <?php if($display_author == 'all'){ echo 'selected="selected" '; } ?>value="all">Tout</option>
 					    		
 					    		</select>
 								
@@ -779,7 +852,7 @@ class almanac_events {
 				
 				<p class="submit">
 				
-					<input type="submit" name="submit_wordpress_events_settings" id="submit" class="button-primary" value="Save Changes">
+					<input type="submit" name="submit_wordpress_events_settings" id="submit" class="button-primary" value="Sauvegarder les modifications">
 					
 				</p>
 	    		
@@ -805,13 +878,11 @@ class almanac_events {
 			lng: lng
 		};
 	
-		// since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
 		jQuery.post("<?php bloginfo( 'wpurl' ); ?>/wp-admin/admin-ajax.php", data, function(response) {
 			jQuery('#wordpress_events_ajax_div').html(response);
 			jQuery('#wordpress_events_ajax_div').dialog({modal: true, minWidth: 700, minHeight: 500, title: title, zIndex: 5000 });
 			jQuery('img.loading_'+id).hide();
 
-			//alert('Got this from the server: ' + response);
 		});
 		  
 		};

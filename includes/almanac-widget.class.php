@@ -14,7 +14,7 @@ function wp_events_register_widgets(){
 class Events extends WP_Widget {
 
 	function __construct() {
-		parent::WP_Widget( /* Base ID */'platform_events', /* Name */'Événements', array( 'description' => 'Affichez vos événements à venir' ) );
+		parent::WP_Widget('platform_events', 'Événements', array( 'description' => 'Affichez vos événements à venir' ) );
 	}
 
 	function widget( $args, $instance ) {
@@ -124,7 +124,6 @@ class Events extends WP_Widget {
 				
 				<br style="clear:both" />
 							
-<!-- 				<div class="column_bottom"></div> -->
 			</div>		
 		
 		<?php
@@ -163,5 +162,5 @@ class Events extends WP_Widget {
 		<?php 
 	}
 
-} // class Gigs
+} 
 ?>
