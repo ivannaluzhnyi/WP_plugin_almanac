@@ -157,3 +157,78 @@ function codeLatLng(lat, lng) {
         }
     });
 }
+
+ /*
+
+
+     function events_tags_taxonomy()
+    {
+        // Labels part for the GUI
+
+        $props = array(
+            'name' => _x('Événements Tags', 'taxonomy general name'),
+            'singular_name' => _x('Événements Tag', 'taxonomy singular name'),
+            'search_items' =>  __('Chercher Événements Tags'),
+            'popular_items' => __('Popular Événements Tags'),
+            'all_items' => __('Tout les Tags'),
+            'parent_item' => null,
+            'parent_item_colon' => null,
+            'edit_item' => __('Modifié Tag'),
+            'update_item' => __('Modifié Tag'),
+            'add_new_item' => __('Ajouter Tag'),
+            'new_item_name' => __('Ajouter Tag'),
+            'separate_items_with_commas' => __('Separate Événements tags with commas'),
+            'add_or_remove_items' => __('Add or remove Événements tags'),
+            'choose_from_most_used' => __('Choose from the most used Événements tags'),
+            'menu_name' => __(' Tags'),
+        );
+
+        // Now register the non-hierarchical taxonomy like tag
+
+        register_taxonomy('events_tags', array('events'), array(
+            'hierarchical' => false,
+            'labels' => $props,
+            'show_ui' => true,
+            'show_in_rest' => true,
+            'show_admin_column' => true,
+            'update_count_callback' => '_update_post_term_count',
+            'query_var' => true,
+            'rewrite' => array('slug' => 'events_tags'),
+        ));
+    }
+
+
+       function custom_type_categories()
+    {
+        $props = array(
+            'name' => _x('Événements Categories', 'mythemlg'),
+            'singular_name' => _x('Événements Categorie', 'mythemlg'),
+            'search_items' =>  __('Chercher Événements Categories'),
+            'all_items' => __('Tots les categories'),
+            'parent_item' => __('Parent Événements categorie'),
+            'parent_item_colon' => __('Parent Événements categorie:'),
+            'edit_item' => __('Modifié  categorie'),
+            'update_item' => __('Modifié categorie'),
+            'add_new_item' => __('Ajouter nouvelle categorie'),
+            'new_item_name' => __('Ajouter nouvelle categorie'),
+            'menu_name' => __(' Categories'),
+        );
+
+        // Now register the taxonomy
+        register_taxonomy('events_categories', array('events'), array(
+            'hierarchical' => true,
+            'labels' => $props,
+            'show_ui' => true,
+            'show_in_rest' => true,
+            'show_admin_column' => true,
+            'query_var' => true,
+            'rewrite' => array('slug' => 'events_categories'),
+        ));
+    }
+
+            add_action('init', array($this, 'custom_type_categories'), 0);
+
+        add_action('init', array($this, 'events_tags_taxonomy'), 0);
+
+
+ */
