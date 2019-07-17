@@ -904,19 +904,19 @@ class almanac_events {
 		
 		if(!isset($atts['user'])){
 			$user = 'all';
-		}else{
+		} else {
 			$user = $atts['user'];
 		}
 			
 		if(isset($_GET['mm'])){
 			$month = intval($_GET['mm']);
-		}else{
+		} else {
 			$month = date("m");
 		}
 		
 		if(isset($_GET['yy'])){
 			$year = intval($_GET['yy']);
-		}else{
+		} else {
 			$year = date("Y");
 		} 
 		
