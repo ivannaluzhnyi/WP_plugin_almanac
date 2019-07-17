@@ -11,11 +11,22 @@ function wp_calandar_register_widgets(){
 
 class Almanac extends WP_Widget {
 
-	function __construct() {
-		parent::WP_Widget( 'platform_events_calandar', 'Calandrier Almanac', array( 'description' => 'Affichez vos événements à venir' ) );
+    /**
+     * Almanac constructor.
+     */
+    function __construct() {
+		parent::WP_Widget( 'platform_events_calandar', 'Calendrier Almanac',
+            [
+                    'description' => 'Affichez vos événements à venir'
+            ]
+        );
     }
 
-    function widget( $args, $instance ) {
+    /**
+     * @param $args
+     * @param $instance
+     */
+    function widget($args, $instance ) {
         extract( $args );
 
         $display_author = get_option('display_author');
@@ -26,27 +37,27 @@ class Almanac extends WP_Widget {
 		
 		if(!isset($atts['user'])){
 			$user = 'all';
-		}else{
+		} else {
 			$user = $atts['user'];
 		}
 			
 		if(isset($_GET['mm'])){
 			$month = intval($_GET['mm']);
-		}else{
+		} else {
 			$month = date("m");
 		}
 		
 		if(isset($_GET['yy'])){
 			$year = intval($_GET['yy']);
-		}else{
+		} else {
 			$year = date("Y");
 		} 
 		
 		$calendar = '<span class="events_date_now">' . date("F Y",strtotime($year."-".$month."-01")) . '</span>
 	
-		<span class="float-left calendar_nav"><a href="' . add_query_arg( array( 'mm' => date('m',strtotime($year."-".$month."-01 -1 months")), 'yy' => date('Y',strtotime($year."-".$month."-01 -1 months")) ), get_permalink() ) . '"><< ' . date("F Y",strtotime($year."-".$month."-01 -1 months")) . '</a></span>
+		<span class="float-left calendar_nav"><a href="' . add_query_arg( [ 'mm' => date('m',strtotime($year."-".$month."-01 -1 months")), 'yy' => date('Y',strtotime($year."-".$month."-01 -1 months")) ], get_permalink() ) . '"><< ' . date("F Y",strtotime($year."-".$month."-01 -1 months")) . '</a></span>
 		
-		<span class="float-right calendar_nav"><a href="' . add_query_arg( array( 'mm' => date('m',strtotime($year."-".$month."-01 +1 months")), 'yy' => date('Y',strtotime($year."-".$month."-01 +1 months")) ), get_permalink() ) . '">' . date("F Y",strtotime($year."-".$month."-01 +1 months")) . ' >></a></span>
+		<span class="float-right calendar_nav"><a href="' . add_query_arg( [ 'mm' => date('m',strtotime($year."-".$month."-01 +1 months")), 'yy' => date('Y',strtotime($year."-".$month."-01 +1 months")) ], get_permalink() ) . '">' . date("F Y",strtotime($year."-".$month."-01 +1 months")) . ' >></a></span>
 		
 		<br style="clear:both;">';
 		
@@ -252,13 +263,21 @@ class Almanac extends WP_Widget {
     }
 
 
-    function update( $new_instance, $old_instance ) {
+    /**
+     * @param $new_instance
+     * @param $old_instance
+     * @return mixed
+     */
+    function update($new_instance, $old_instance ) {
 		$instance = $old_instance;
 
 		return $instance;
     }
-    
-    function form( $instance ) {
+
+    /**
+     * @param $instance
+     */
+    function form($instance ) {
 		?>
 		<p>
             test calandar
