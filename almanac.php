@@ -1,7 +1,7 @@
 <?php
 
 /*
-Plugin Name: almanac
+Plugin Name: Almanac
 Plugin URI:http://wordpress.org/plugins/almanac
 Description: Calendar event
 Author: Ivan Naluzhnyi / Mikael PAUL / Theo LEGAGNEUR

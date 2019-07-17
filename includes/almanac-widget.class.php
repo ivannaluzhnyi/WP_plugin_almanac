@@ -3,9 +3,7 @@
 add_action( 'widgets_init', 'wp_events_register_widgets' );
 
 function wp_events_register_widgets(){
-
 	register_widget("Events");
-
 }
 
 /**
@@ -13,11 +11,20 @@ function wp_events_register_widgets(){
  */
 class Events extends WP_Widget {
 
-	function __construct() {
-		parent::WP_Widget('platform_events', 'Événements', array( 'description' => 'Affichez vos événements à venir' ) );
+    /**
+     * Events constructor.
+     */
+    function __construct() {
+		parent::WP_Widget('platform_events', 'Événements',
+            ['description' => 'Affichez vos événements à venir dans le calendrier.']
+        );
 	}
 
-	function widget( $args, $instance ) {
+    /**
+     * @param $args
+     * @param $instance
+     */
+    function widget($args, $instance ) {
 		extract( $args );
 		$title = apply_filters( 'widget_title', $instance['title'] );
 		$number = $instance['number'];
@@ -25,7 +32,7 @@ class Events extends WP_Widget {
 			$number = 1;
 		}
 		echo $before_widget;
-	
+
 		?>
 		
 			<div class="column_1_3">
@@ -56,68 +63,44 @@ class Events extends WP_Widget {
 					LIMIT " . $number . "
 					";
 					
-					//echo $querystr;
-					
 					$pageposts = $wpdb->get_results($querystr, OBJECT);
 					
 					global $post;
 					
 					if ($pageposts){
-					
-					$almanac_events = new almanac_events;
-										
-					$i = 0;
-					
-						foreach ($pageposts as $post){ ?>
-						
-							<?php setup_postdata($post); ?>
-												
-							<span class="gig-listing float-left">
-						
-								<?php echo '<a id="'.get_the_ID().'" onclick="resize(\'' . get_post_meta($post->ID,'lat',true) . '\', \'' . get_post_meta($post->ID,'lng',true) . '\', \'' . get_the_ID() . '\', \''. get_the_title() .'\', \''.$calendar_url.'\')" title="' . get_the_title() . '" class="light-blue pointer" >'
-					
-							.get_the_title().
-					
-							'</a><img class="loading loading_'.get_the_ID().'" src="'.WPE_url.'/img/loading.gif" alt="Loading…" style="display:none;" /><br>'; ?>
-							
-							</span>
-							
-							<br style="clear:both" />
-							
-							<br>
-							
-							<?php echo '
-		
-								<script type="text/javascript">
-								
-									function resize(lat, lng, id, title, url){
-														
-										ajax_calendar(id, title, url, lat, lng);
-									
-										return false;
-									
-									}
-									
-								</script>';
-							
-							if(isset($_GET['id'])){
-									
-								 echo '<script type="text/javascript">
-											
-									jQuery(document).ready(function() {
-										
-										ajax_calendar(\''.$_GET['id'].'\', \''.urldecode($_GET['t']).'\', \''.get_permalink().'\');
-										
-									})
-								
-								</script>';
-									
-							}
-							
-							$i++;
-						
-						} 
-					
+
+                        $almanac_events = new almanac_events;
+
+                        $i = 0;
+
+                        foreach ($pageposts as $post){ ?>
+                            <?php setup_postdata($post); ?>
+                            <span class="gig-listing float-left">
+                                <?php echo '<a id="'.get_the_ID().'" onclick="resize(\'' . get_post_meta($post->ID,'lat',true) . '\', \'' . get_post_meta($post->ID,'lng',true) . '\', \'' . get_the_ID() . '\', \''. get_the_title() .'\', \''.$calendar_url.'\')" title="' . get_the_title() . '" class="light-blue pointer" >'
+                                    .get_the_title().
+                                    '</a><img class="loading loading_'.get_the_ID().'" src="'.WPE_url.'/img/loading.gif" alt="Loading…" style="display:none;" /><br>'; ?>
+                            </span>
+
+                            <br style="clear:both" />
+                            <br>
+
+                            <?php echo '
+                                <script type="text/javascript">							
+                                    function resize(lat, lng, id, title, url){														
+                                        ajax_calendar(id, title, url, lat, lng);									
+                                        return false;
+                                    }
+                                </script>';
+
+                            if(isset($_GET['id'])){
+                                 echo   '<script type="text/javascript">
+                                            jQuery(document).ready(function() {
+                                            ajax_calendar(\''.$_GET['id'].'\', \''.urldecode($_GET['t']).'\', \''.get_permalink().'\');	
+                                            })
+                                        </script>';
+                            }
+                            $i++;
+                        }
 					}
 				
 					wp_reset_query(); ?>
@@ -129,17 +112,24 @@ class Events extends WP_Widget {
 		<?php
 		
 		echo $after_widget;
-		
 	}
 
-	function update( $new_instance, $old_instance ) {
+    /**
+     * @param $new_instance
+     * @param $old_instance
+     * @return mixed
+     */
+    function update($new_instance, $old_instance ) {
 		$instance = $old_instance;
 		$instance['title'] = strip_tags($new_instance['title']);
 		$instance['number'] = strip_tags($new_instance['number']);
 		return $instance;
 	}
 
-	function form( $instance ) {
+    /**
+     * @param $instance
+     */
+    function form($instance ) {
 		if ( $instance ) {
 			$title = esc_attr( $instance[ 'title' ] );
 			$number = esc_attr( $instance[ 'number' ] );
@@ -151,13 +141,13 @@ class Events extends WP_Widget {
 		
 		?>
 		<p>
-		<label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Titre:'); ?></label> 
-		<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" />
+		    <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Titre:'); ?></label>
+		    <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" />
 		</p>
 		
 		<p>
-		<label for="<?php echo $this->get_field_id('number'); ?>"><?php _e('Nombre de concerts à venir:'); ?></label> 
-		<input class="widefat" id="<?php echo $this->get_field_id('number'); ?>" name="<?php echo $this->get_field_name('number'); ?>" type="text" value="<?php echo $number; ?>" />
+		    <label for="<?php echo $this->get_field_id('number'); ?>"><?php _e('Nombre de concerts à venir:'); ?></label>
+		    <input class="widefat" id="<?php echo $this->get_field_id('number'); ?>" name="<?php echo $this->get_field_name('number'); ?>" type="text" value="<?php echo $number; ?>" />
 		</p>
 		<?php 
 	}
