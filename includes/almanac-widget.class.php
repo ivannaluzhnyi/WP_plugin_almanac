@@ -38,7 +38,7 @@ class Events extends WP_Widget {
 			<div class="column_1_3">
 			
 					<div id="front_page_section_title" class="clear-left">
-						<span class="shadow"><?php echo $title;?></span>
+						<span class="shadow"><?= $title;?></span>
 					</div>
 					
 					<?php global $post, $wpdb; 
@@ -141,13 +141,13 @@ class Events extends WP_Widget {
 		
 		?>
 		<p>
-		    <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Titre:'); ?></label>
-		    <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" />
+		    <label for="<?= $this->get_field_id('title'); ?>"><?php _e('Titre:'); ?></label>
+		    <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?= $title; ?>" />
 		</p>
 		
 		<p>
-		    <label for="<?php echo $this->get_field_id('number'); ?>"><?php _e('Nombre de concerts à venir:'); ?></label>
-		    <input class="widefat" id="<?php echo $this->get_field_id('number'); ?>" name="<?php echo $this->get_field_name('number'); ?>" type="text" value="<?php echo $number; ?>" />
+		    <label for="<?= $this->get_field_id('number'); ?>"><?php _e('Nombre de concerts à venir:'); ?></label>
+		    <input class="widefat" id="<?= $this->get_field_id('number'); ?>" name="<?= $this->get_field_name('number'); ?>" type="text" value="<?= $number; ?>" />
 		</p>
 		<?php 
 	}
