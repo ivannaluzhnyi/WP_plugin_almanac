@@ -16,41 +16,41 @@ class almanac_events {
      */
     function __construct(){
 	
-		add_action("admin_init", array( $this, 'admin_js_libs' ));
+		add_action("admin_init", [$this, 'admin_js_libs' ]);
 		
-		add_action("admin_print_styles", array( $this, 'style_libs' ));
+		add_action("admin_print_styles", [$this, 'style_libs']);
 		
-		add_action("wp_print_styles", array( $this, 'style_libs_front' ));
+		add_action("wp_print_styles", [$this, 'style_libs_front']);
 		
-		add_action("wp_enqueue_scripts", array( $this, 'front_js_libs' ));
+		add_action("wp_enqueue_scripts", [$this, 'front_js_libs']);
 					
-		add_action('init', array( $this, 'add_custom_post_type' ) );
+		add_action('init', [$this, 'add_custom_post_type']);
 
-		add_action('init', array( $this, 'custom_type_categories' ) );
+		add_action('init', [$this, 'custom_type_categories']);
 
-		add_action('init', array( $this, 'events_tags_tags_taxonomy' ) );
+		add_action('init', [$this, 'events_tags_tags_taxonomy']);
 		
-		add_filter('manage_edit-events_columns', array( $this, 'add_new_events_columns' ));
+		add_filter('manage_edit-events_columns', [$this, 'add_new_events_columns']);
 		
-		add_action('manage_events_posts_custom_column', array( $this, 'manage_events_columns' ), 10, 2);
+		add_action('manage_events_posts_custom_column', [$this, 'manage_events_columns'], 10, 2);
 		
-		add_filter('pre_get_posts', array( $this, 'show_events_for_current_user_only' ));
+		add_filter('pre_get_posts', [$this, 'show_events_for_current_user_only']);
 		
-		add_filter('views_edit-events', array( $this, 'remove_post_counts' ));
+		add_filter('views_edit-events', [$this, 'remove_post_counts']);
 		
-		add_action( 'admin_init', array( $this, 'add_meta_boxes' ) );
+		add_action( 'admin_init', [$this, 'add_meta_boxes']);
 		
-		add_action( 'save_post', array( $this, 'save_meta_box_data' ), 1, 2 );
+		add_action( 'save_post', [$this, 'save_meta_box_data'], 1, 2 );
 		
-		add_shortcode( 'calendar' , array( $this, 'display_calendar' ) );
+		add_shortcode( 'calendar' , [$this, 'display_calendar']);
 		
-		add_action('admin_menu', array( $this, 'add_pages'));
+		add_action('admin_menu', [$this, 'add_pages']);
 		
-		add_action('wp_head', array( $this, 'my_action_javascript') );
+		add_action('wp_head', [$this, 'my_action_javascript']);
 		
-		add_action('wp_ajax_nopriv_my_special_action', array( $this, 'my_action_callback') ); 
+		add_action('wp_ajax_nopriv_my_special_action', [$this, 'my_action_callback']);
 		
-		add_action('wp_ajax_my_special_action', array( $this, 'my_action_callback') ); 
+		add_action('wp_ajax_my_special_action', [$this, 'my_action_callback']);
 	
 	}
 
@@ -61,9 +61,9 @@ class almanac_events {
 	
 		wp_enqueue_script('jquery');
 	
-		wp_enqueue_script('jquery-ui-1.8.16.custom.min', WPE_url . '/js/jquery-ui-1.8.16.custom.min.js', array('jquery-ui-core'), 1.0 );
+		wp_enqueue_script('jquery-ui-1.8.16.custom.min', WPE_url . '/js/jquery-ui-1.8.16.custom.min.js', ['jquery-ui-core'], 1.0 );
 		
-		wp_enqueue_script('timepicker', WPE_url . '/js/jquery-ui-timepicker-addon.js', array('jquery-ui-1.8.16.custom.min'), 1.0 ); 
+		wp_enqueue_script('timepicker', WPE_url . '/js/jquery-ui-timepicker-addon.js', ['jquery-ui-1.8.16.custom.min'], 1.0 );
 		
 		global $typenow;
 
@@ -82,27 +82,22 @@ class almanac_events {
      *
      */
     function style_libs(){
-	
 		wp_enqueue_style('jquery.ui.theme', WPE_url . '/js/smoothness/jquery-ui-1.8.17.custom.css');
-	
 	}
 
     /**
      *
      */
     function style_libs_front(){
-				
 		wp_enqueue_style('wpe', WPE_url . '/css/wpe.css');
 		
 		wp_enqueue_style('jquery.ui.theme', WPE_url . '/js/smoothness/jquery-ui-1.8.17.custom.css');
-	
 	}
 
     /**
      *
      */
     function front_js_libs(){
-	
 		wp_enqueue_script('google_maps_api', 'http://maps.google.com/maps/api/js?sensor=true', '', 1.0 );
 		
 		wp_enqueue_script('jquery');
@@ -110,7 +105,6 @@ class almanac_events {
 		wp_enqueue_script('jquery-ui-core');
 		
 		wp_enqueue_script('jquery-ui-dialog');
-	
 	}
 
     /**
@@ -342,16 +336,14 @@ class almanac_events {
      *
      */
     function add_meta_boxes() {
-	
 		add_meta_box( 
 	        'events_details',
-	        'Event details',
+	        'Détails de l\'évènement',
 	        [$this, 'events_details'],
 	        'events',
 	        'normal',
 	        'core'
 	    );
-	
 	}
 
     /**
@@ -397,34 +389,34 @@ class almanac_events {
 			<tbody>
 				<tr valign="top">
 					<th scope="row">
-						<label for="venue_name">Nom de la place</label>
+						<label for="venue_name">Nom descriptif</label>
 					</th>
 					<td>
-						<input type="text" id="events_venu_name" name="events_venue_name" value="<?php echo get_post_meta($post->ID,'events_venue_name',true); ?>" size="25" />
+						<input type="text" id="events_venu_name" name="events_venue_name" value="<?= get_post_meta($post->ID,'events_venue_name',true); ?>" size="25" />
 					</td>
 				</tr>
 				
 				<tr valign="top">
 				
 					<th scope="row">
-						<label for="venue_name">Adresse du lieu</label>
+						<label for="venue_name">Adresse de l'évènement</label>
 					</th>
 				
 					<td>
 					
-						<textarea name="venue_location_address" id="member_info_address" cols="50" rows="9" class="input" ><?php echo get_post_meta($post->ID,'venue_location_address',true); ?></textarea>
+						<textarea name="venue_location_address" id="member_info_address" cols="50" rows="9" class="input" ><?= get_post_meta($post->ID,'venue_location_address',true); ?></textarea>
 						
 						<br>
 						
-						<a class="showhide" style="cursor:pointer;">Afficher / masquer l'entrée de carte</a>
+						<a class="showhide" style="cursor:pointer;">Afficher / masquer la map</a>
 						
 						<div id="showhide">
 						
-							<input type="text" class="input" name="mi_location" id="member_info_location" value="<?php echo get_post_meta($post->ID,'mi_location',true); ?>" />
-							<input type="button" class="button-primary button" value="Lookup" onClick="codeAddress('YES')" />
+							<input type="text" class="input" name="mi_location" id="member_info_location" value="<?= get_post_meta($post->ID,'mi_location',true); ?>" />
+							<input type="button" class="button-primary button" value="Rechercher" onClick="codeAddress('YES')" />
 							<br>
 							<span class="description" style="float: left;">
-							    Entrez un emplacement dans n’importe quel format et cliquez sur le bouton "Rechercher".
+							    Entrez un lieu dans n’importe quel format et cliquez sur le bouton "Rechercher".
 							</span>
 							<br>
 							<br>
@@ -435,14 +427,14 @@ class almanac_events {
 							<br>
 							<input type="hidden" name="lng" id="lng" value="<?= get_post_meta($post->ID,'lng',true); ?>" />
 							<input type="hidden" name="lat" id="lat" value="<?= get_post_meta($post->ID,'lat',true); ?>" />
-							<span class="member_info_label">Afficher la carte?</span>
+							<span class="member_info_label">Afficher la map ?</span>
 							<select name="show_map" id="mi_show_map">
-								<option value="">Veuillez choisir</option>
-								<option value="true" <?php if(get_post_meta($post->ID,'show_map',true) == 'true'){ echo 'selected'; } ?>>True</option>
-								<option value="false" <?php if(get_post_meta($post->ID,'show_map',true) == 'false'){ echo 'selected'; } ?>>False</option>
+								<option value=""> Veuillez choisir </option>
+								<option value="true" <?php if(get_post_meta($post->ID,'show_map',true) == 'true'){ echo 'selected'; } ?>> True </option>
+								<option value="false" <?php if(get_post_meta($post->ID,'show_map',true) == 'false'){ echo 'selected'; } ?>> False </option>
 							</select>
 							<span class="description">
-								Show a map of the event location?
+								La map sera affichée dans la description de l'évènement.
 							</span>
 						</div>
 						<br style="clear:both;">
@@ -451,7 +443,7 @@ class almanac_events {
 				
 				<tr valign="top">
 					<th scope="row">
-						<label for="date">Date et l'heure</label>
+						<label for="date">Date & Heure</label>
 					</th>
 					<td>
 						<?php
@@ -461,7 +453,7 @@ class almanac_events {
                                 $date = '';
                             }
                         ?>
-						<input class="datepicker" type="text" id="events_date" name="events_date" value="<?php echo $date; ?>" size="25" />
+						<input class="datepicker" type="text" id="events_date" name="events_date" value="<?= $date; ?>" size="25" />
 					</td>
 				</tr>
 				
@@ -556,16 +548,16 @@ class almanac_events {
                         'yy' => date('Y',strtotime($year."-".$month."-01 -1 months"))
                     ], get_permalink() ) . '
             ">
-                <<' . date("F Y",strtotime($year."-".$month."-01 -1 months")) . '
+                << ' . date("F Y",strtotime($year."-".$month."-01 -1 months")) . '
             </a>
         </span>
 		
 		<span class="float-right calendar_nav">
 		    <a href="' . add_query_arg(
-		            array(
-		                    'mm' => date('m',strtotime($year."-".$month."-01 +1 months")),
-                            'yy' => date('Y',strtotime($year."-".$month."-01 +1 months")) ),
-                            get_permalink() ) . '
+		            [
+                        'mm' => date('m',strtotime($year."-".$month."-01 +1 months")),
+                        'yy' => date('Y',strtotime($year."-".$month."-01 +1 months"))
+                    ], get_permalink() ) . '
             ">
                 ' . date("F Y",strtotime($year."-".$month."-01 +1 months")) . ' >>
             </a>
@@ -577,7 +569,7 @@ class almanac_events {
 		$calendar .= '<table cellpadding="0" cellspacing="0" class="calendar">';
 		
 		/* table headings */
-		$headings = array('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday');
+		$headings = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
 		$calendar.= '<tr class="calendar-row"><td class="calendar-day-head">'.implode('</td><td class="calendar-day-head">',$headings).'</td></tr>';
 		
 		/* days and weeks vars now ... */
@@ -585,7 +577,7 @@ class almanac_events {
 		$days_in_month = date('t',mktime(0,0,0,$month,1,$year));
 		$days_in_this_week = 1;
 		$day_counter = 0;
-		$dates_array = array();
+		$dates_array = [];
 		
 		/* row for week one */
 		$calendar.= '<tr class="calendar-row">';
@@ -837,7 +829,7 @@ class almanac_events {
 							</th>
 							
 							<td>
-					    		<input type="text" name="prepend_author" value="<?php echo $prepend_author; ?>">
+					    		<input type="text" name="prepend_author" value="<?= $prepend_author; ?>">
 							</td>
 						</tr>
 					</tbody>
@@ -947,7 +939,7 @@ class almanac_events {
 				</div>
 				<script type="text/javascript">
 					var addthis_config = {"data_track_addressbar":false};
-					var addthis_share = {"url":"'. $turl = $this->getTinyUrl( add_query_arg( array( 'mm' => $month, 'yy' => $year, 'id' => $id, 't' => urlencode(get_the_title()) ), $url) ) .'"};
+					var addthis_share = {"url":"'. $turl = $this->getTinyUrl( add_query_arg( ['mm' => $month, 'yy' => $year, 'id' => $id, 't' => urlencode(get_the_title()) ], $url) ) .'"};
 				</script>
 				<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js?domready=1#pubid=ra-4f0f005c74986ffa"></script>
 				 <!-- AddThis Button END -->
@@ -1002,7 +994,6 @@ class almanac_events {
 				    
 				    geocoder.geocode({\'latLng\': latlng}, function(results, status) {
 				      if (status == google.maps.GeocoderStatus.OK) {
-				  		//console.log(results);
 				  			
 						if (markersArray){
 					        for (i in markersArray){
